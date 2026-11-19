@@ -6,6 +6,235 @@
 <meta name="robots" content="noindex">
 <title>Vérification de votre entreprise – Good Story</title>
 <style>
+  :root{--bg:#f6f6f6;--card:#fff;--text:#242424;--muted:#6b6b6b;--accent:#242424;--btn:#242424;--btn-text:#fff;--ok:#1f7a4d;--err:#b3261e;--line:#e2e2e2}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+  .wrap{max-width:560px;margin:0 auto;padding:32px 16px 48px}
+  .logo{display:block;max-width:180px;max-height:70px;margin:0 auto 20px}
+  .card{background:var(--card);border-radius:14px;padding:28px 24px;box-shadow:0 2px 12px rgba(16,9,60,.07)}
+  h1{font-size:1.35rem;margin:0 0 6px}
+  .sub{color:var(--muted);margin:0 0 22px;font-size:.95rem}
+  label{display:block;font-weight:600;margin:0 0 6px;font-size:.95rem}
+  input{width:100%;font:inherit;font-size:1.1rem;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;color:var(--text);background:#fff}
+  input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,0,0,.08)}
+  #siren{letter-spacing:.12em}
+  .hint{font-size:.85rem;color:var(--muted);margin:6px 0 0}
+  button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:13px 18px;cursor:pointer;width:100%;margin-top:18px}
+  .primary{background:var(--btn);color:var(--btn-text)}
+  .primary:disabled{opacity:.5;cursor:not-allowed}
+  .ghost{background:transparent;color:var(--btn);border:1.5px solid var(--line)}
+  .msg{margin-top:16px;padding:12px 14px;border-radius:10px;font-size:.95rem;display:none}
+  .msg.err{display:block;background:#fdecea;color:var(--err)}
+  .msg.info{display:block;background:#eef4fa;color:var(--text)}
+  .company{border:1.5px solid var(--line);border-radius:12px;padding:16px;margin-top:4px}
+  .company .name{font-size:1.15rem;font-weight:700;margin:0 0 4px}
+  .company .line{margin:2px 0;color:var(--muted)}
+  .badge{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 10px;border-radius:99px;background:#e6f4ec;color:var(--ok);margin-bottom:8px}
+  .grid{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:10px}
+  .hidden{display:none}
+  .foot{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
+  .foot a{color:var(--muted)}
+  .gs{display:block;width:150px;margin:0 auto 22px;color:var(--text)}
+  .gs-small{display:inline-block;width:70px;vertical-align:middle;color:var(--muted)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="gs" viewBox="0 0 660 74"><path d="M55.776 55.375q-1.806 7.825-7.825 12.94c-4.012 3.412-9.43 5.117-16.351 5.117-5.919 0-11.236-1.404-16.05-4.213q-7.224-4.215-11.437-12.64C1.304 51.06 0 44.440 0 36.716c0-7.624 1.404-14.145 4.414-19.662q4.515-8.276 12.64-12.64C22.470 1.504 28.890 0 36.214 0c9.630 0 17.456 2.307 23.475 6.822 6.018 4.614 9.530 11.034 10.633 19.461H52.165c-.602-3.812-2.307-6.922-5.016-9.230-2.809-2.206-6.220-3.410-10.433-3.410q-8.727 0-13.543 6.020c-3.210 4.012-4.815 9.630-4.815 17.053 0 7.825 1.705 13.543 5.116 17.355s8.326 5.718 14.947 5.718c4.816 0 8.828-1.204 11.838-3.612q4.515-3.610 5.116-9.329l.1-.803h-22.270V34.108h38.622v37.719H57.280l-.702-16.452zM95.424 68.918c-5.417-2.910-9.630-7.123-12.540-12.640-3.010-5.518-4.413-12.038-4.413-19.562s1.404-14.044 4.413-19.562c2.910-5.517 7.123-9.730 12.540-12.740C100.841 1.504 107.261 0 114.685 0c7.323 0 13.743 1.505 19.160 4.414 5.417 3.010 9.631 7.223 12.640 12.740 2.909 5.518 4.414 12.038 4.414 19.562 0 7.624-1.505 14.145-4.414 19.562-2.909 5.517-7.122 9.730-12.539 12.640-5.417 3.010-11.838 4.414-19.261 4.414-7.424 0-13.844-1.405-19.261-4.414m32.402-14.847c3.110-3.812 4.715-9.530 4.715-17.355 0-7.624-1.605-13.342-4.715-17.254-3.109-3.813-7.523-5.819-13.141-5.819-5.718 0-10.132 2.006-13.142 5.819-3.110 3.811-4.614 9.630-4.614 17.254 0 7.825 1.504 13.543 4.614 17.355 3.010 3.812 7.424 5.718 13.142 5.718 5.618 0 10.032-1.906 13.141-5.718M172.425 68.918c-5.417-2.910-9.630-7.123-12.540-12.640-3.009-5.518-4.414-12.038-4.414-19.562s1.405-14.044 4.414-19.562c2.910-5.517 7.123-9.730 12.540-12.740C177.842 1.504 184.262 0 191.686 0c7.323 0 13.743 1.505 19.160 4.414 5.417 3.010 9.631 7.223 12.640 12.740 2.909 5.518 4.414 12.038 4.414 19.562 0 7.624-1.505 14.145-4.414 19.562-2.909 5.517-7.122 9.730-12.539 12.640-5.417 3.010-11.838 4.414-19.261 4.414-7.424 0-13.844-1.405-19.261-4.414m32.402-14.847c3.110-3.812 4.715-9.530 4.715-17.355 0-7.624-1.605-13.342-4.715-17.254-3.109-3.813-7.523-5.819-13.141-5.819-5.718 0-10.132 2.006-13.142 5.819-3.109 3.811-4.614 9.630-4.614 17.254 0 7.825 1.505 13.543 4.614 17.355 3.010 3.812 7.424 5.718 13.142 5.718 5.618 0 10.032-1.906 13.141-5.718M283.534 5.417c5.417 2.508 9.831 6.420 13.041 11.637 3.210 5.216 4.915 11.837 4.915 19.662 0 12.239-3.410 21.066-10.132 26.684q-10.232 8.427-26.182 8.427h-29.694V1.605h29.694c6.821 0 12.941 1.304 18.358 3.812m-19.060 52.867c5.517 0 10.031-1.705 13.542-5.317 3.411-3.611 5.217-9.028 5.217-16.251 0-7.424-1.806-12.940-5.217-16.352-3.511-3.410-8.025-5.216-13.542-5.216h-11.236v43.136zM335.613 66.911q-8.427-6.320-8.126-18.057h17.155c.401 3.511 1.906 6.120 4.514 7.925 2.608 1.806 6.320 2.609 10.934 2.609 4.113 0 7.323-.602 9.530-1.907 2.207-1.304 3.411-3.210 3.411-5.718 0-1.705-.702-3.110-1.906-4.313-1.304-1.204-3.210-2.007-5.618-2.508l-16.151-3.511c-6.721-1.405-11.837-3.812-15.248-7.223-3.511-3.410-5.216-7.724-5.216-12.940 0-6.622 2.608-11.738 8.025-15.550C342.234 2.006 349.657.1 359.288.1c9.731 0 17.355 2.207 22.772 6.420 5.417 4.314 8.226 10.433 8.426 18.258h-16.853c-.201-3.410-1.605-6.019-4.013-7.925-2.507-1.806-5.918-2.809-10.332-2.809-4.013 0-7.123.703-9.330 1.906-2.207 1.305-3.210 3.110-3.210 5.518 0 1.805.702 3.310 2.307 4.614 1.606 1.405 3.813 2.408 6.822 3.010l18.860 4.213c5.116 1.204 9.128 3.411 11.937 6.520 2.809 3.210 4.214 7.224 4.214 12.240 0 6.720-2.809 11.937-8.226 15.649-5.518 3.812-13.242 5.618-23.073 5.618-10.433 0-18.358-2.107-23.976-6.420M452.244 1.605v13.543h-21.468v56.679H413.020v-56.680h-21.869V1.606zM468.869 68.918c-5.417-2.910-9.630-7.123-12.540-12.640-3.009-5.518-4.414-12.038-4.414-19.562s1.405-14.044 4.414-19.562c2.910-5.517 7.123-9.730 12.540-12.740C474.286 1.504 480.706 0 488.130 0c7.323 0 13.743 1.505 19.160 4.414 5.417 3.010 9.631 7.223 12.640 12.740 2.909 5.518 4.414 12.038 4.414 19.562 0 7.624-1.505 14.145-4.414 19.562-2.909 5.517-7.122 9.730-12.539 12.640-5.417 3.010-11.838 4.414-19.261 4.414-7.424 0-13.844-1.405-19.261-4.414m32.402-14.847c3.110-3.812 4.715-9.530 4.715-17.355 0-7.624-1.605-13.342-4.715-17.254-3.109-3.813-7.523-5.819-13.141-5.819-5.718 0-10.132 2.006-13.142 5.819-3.109 3.811-4.614 9.630-4.614 17.254 0 7.825 1.505 13.543 4.614 17.355 3.010 3.812 7.424 5.718 13.142 5.718 5.618 0 10.032-1.906 13.141-5.718M593.821 71.827h-17.756l-2.106-15.148c-.402-2.508-.903-4.414-1.706-5.718-.802-1.204-1.906-2.107-3.511-2.608-1.605-.402-3.812-.703-6.821-.703h-12.239v24.177h-17.756V1.605h37.619c7.122 0 12.640 1.605 16.552 4.615s5.919 7.323 5.919 12.940q0 7.524-5.116 12.340c-3.411 3.210-7.925 5.015-13.543 5.316v.703c3.812.1 6.821.601 9.129 1.404 2.307.903 4.113 2.307 5.417 4.313q1.805 3.010 2.708 8.126zm-29.994-36.114c3.210 0 5.918-.903 7.925-2.910 2.006-1.905 3.009-4.514 3.009-7.724 0-2.909-1.003-5.317-3.009-7.122-2.007-1.806-4.715-2.810-7.925-2.810h-14.145v20.566zM660 1.605 634.319 43.940v27.888h-17.857V43.939L590.480 1.605h19.963l4.515 7.724c4.915 8.527 8.426 14.847 10.433 18.960h.702c2.307-4.815 5.718-11.336 10.333-19.360l4.213-7.324z"/></symbol></svg>
+<div class="wrap">
+  <img id="logo" class="logo hidden" alt="">
+  <span id="gslogo" class="gs"><svg viewBox="0 0 660 74" fill="currentColor" role="img" aria-label="Good Story"><use href="#gs"/></svg></span>
+  <div class="card">
+
+    <!-- Lien incomplet -->
+    <section id="step0" class="hidden">
+      <h1>Lien incomplet</h1>
+      <p class="sub" style="margin:0">Ce lien d'inscription ne correspond à aucun voyage. Merci d'utiliser le lien reçu par e-mail, ou de contacter <a href="mailto:pauline@goodstory.events">pauline@goodstory.events</a>.</p>
+    </section>
+
+    <!-- Étape 1 : saisie -->
+    <section id="step1">
+      <h1 id="titre">Vérification de votre entreprise</h1>
+      <p class="sub">Avant de vous inscrire, merci d'indiquer le numéro SIREN de l'entreprise qui sera facturée.</p>
+      <form id="f" novalidate>
+        <label for="siren">Numéro SIREN (9 chiffres)</label>
+        <input id="siren" inputmode="numeric" autocomplete="off" maxlength="11" placeholder="123 456 789">
+        <p class="hint">Il figure sur votre Kbis ou vos factures. Le SIRET (14 chiffres) fonctionne aussi : nous gardons les 9 premiers.</p>
+        <button class="primary" id="go" type="submit">Rechercher mon entreprise</button>
+      </form>
+      <div id="m1" class="msg"></div>
+    </section>
+
+    <!-- Étape 2 : confirmation -->
+    <section id="step2" class="hidden">
+      <h1>Est-ce bien votre entreprise ?</h1>
+      <p class="sub">Informations issues de l'Annuaire des entreprises (État).</p>
+      <div class="company">
+        <span class="badge">Entreprise active</span>
+        <p class="name" id="c_nom"></p>
+        <p class="line">SIREN <span id="c_siren"></span></p>
+        <p class="line" id="c_adr"></p>
+      </div>
+      <div id="manual" class="hidden">
+        <p class="hint" style="margin-top:14px">L'adresse de cette entreprise n'est pas publique. Merci d'indiquer l'adresse de facturation :</p>
+        <label for="m_adr" style="margin-top:10px">Adresse</label>
+        <input id="m_adr" autocomplete="street-address">
+        <div class="grid">
+          <div><label for="m_cp">Code postal</label><input id="m_cp" inputmode="numeric" maxlength="5" autocomplete="postal-code"></div>
+          <div><label for="m_ville">Ville</label><input id="m_ville" autocomplete="address-level2"></div>
+        </div>
+      </div>
+      <button class="primary" id="confirm">Oui, je confirme et je continue</button>
+      <button class="ghost" id="back">Non, modifier le numéro</button>
+      <div id="m2" class="msg"></div>
+    </section>
+
+  </div>
+  <p class="foot"><span class="gs-small"><svg viewBox="0 0 660 74" fill="currentColor" role="img" aria-label="Good Story"><use href="#gs"/></svg></span> · <a href="mailto:pauline@goodstory.events">pauline@goodstory.events</a></p>
+</div>
+
+<script>
+/* ===== Configuration =====
+   Un seul lien pour tous les voyages :
+     https://inscription.goodstory.events/?form=CODE_TALLY
+   CODE_TALLY = la fin de l'adresse du formulaire (tally.so/r/CODE_TALLY).
+   Tout formulaire Tally fonctionne sans être déclaré ici (présentation Good Story).
+   Déclarer un voyage ci-dessous permet seulement d'afficher son titre, le logo
+   et les couleurs du client. */
+const VOYAGES = {
+  "0V8goA": {
+    titre: "Challenge Top 50 – Corse 2027",
+    logo: "https://storage.tally.so/a6f266a0-7046-4495-94d2-f5b9fcabe90c/REXEL_logo_RVB_coul_web.jpg",
+    couleurs: { texte: "#10093c", bouton: "#0a287d", accent: "#4487bd", fond: "#f4f6fb" }
+  }
+};
+const API = "https://recherche-entreprises.api.gouv.fr/search";
+
+const qs = new URLSearchParams(location.search);
+const formId = /^[A-Za-z0-9]{4,12}$/.test(qs.get("form") || "") ? qs.get("form") : null;
+const conf = (formId && VOYAGES[formId]) || {};
+const $ = id => document.getElementById(id);
+if (!formId) {
+  $("step1").classList.add("hidden");
+  $("step0").classList.remove("hidden");
+}
+if (conf.titre) { $("titre").textContent = conf.titre; document.title = conf.titre + " – Vérification entreprise"; }
+if (conf.logo) { $("logo").src = conf.logo; $("logo").alt = conf.titre || ""; $("logo").classList.remove("hidden"); $("gslogo").classList.add("hidden"); }
+if (conf.couleurs) {
+  const c = conf.couleurs, r = document.documentElement.style;
+  if (c.texte) r.setProperty("--text", c.texte);
+  if (c.bouton) { r.setProperty("--btn", c.bouton); r.setProperty("--accent", c.accent || c.bouton); }
+  if (c.accent) r.setProperty("--accent", c.accent);
+  if (c.fond) r.setProperty("--bg", c.fond);
+}
+
+let entreprise = null;
+
+function msg(el, type, text) { el.className = "msg " + type; el.textContent = text; }
+function clear(el) { el.className = "msg"; el.textContent = ""; }
+
+// Contrôle de clé SIREN (algorithme de Luhn ; exception La Poste)
+function sirenValide(s) {
+  if (!/^\d{9}$/.test(s)) return false;
+  if (s === "356000000") return true;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    let d = +s[8 - i];
+    if (i % 2 === 1) { d *= 2; if (d > 9) d -= 9; }
+    sum += d;
+  }
+  return sum % 10 === 0;
+}
+
+$("siren").addEventListener("input", e => {
+  const d = e.target.value.replace(/\D/g, "").slice(0, 14);
+  e.target.value = d.length <= 9 ? d.replace(/(\d{3})(?=\d)/g, "$1 ") : d;
+});
+
+$("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  clear($("m1"));
+  const siren = $("siren").value.replace(/\D/g, "").slice(0, 9);
+  if (siren.length !== 9) return msg($("m1"), "err", "Le SIREN doit comporter 9 chiffres.");
+  if (!sirenValide(siren)) return msg($("m1"), "err", "Ce numéro SIREN n'est pas valide. Merci de vérifier la saisie.");
+
+  $("go").disabled = true; $("go").textContent = "Recherche en cours…";
+  try {
+    const r = await fetch(`${API}?q=${siren}&per_page=5`);
+    if (!r.ok) throw new Error("http " + r.status);
+    const j = await r.json();
+    const res = (j.results || []).find(x => x.siren === siren);
+    if (!res) return msg($("m1"), "err", "Aucune entreprise trouvée avec ce SIREN. Vérifiez le numéro ou contactez pauline@goodstory.events.");
+    if (res.etat_administratif !== "A") return msg($("m1"), "err", "Cette entreprise est indiquée comme fermée dans l'annuaire officiel. Merci de contacter pauline@goodstory.events.");
+    afficher(res);
+  } catch (err) {
+    msg($("m1"), "err", "Le service de vérification ne répond pas pour le moment. Réessayez dans quelques minutes ou contactez pauline@goodstory.events.");
+  } finally {
+    $("go").disabled = false; $("go").textContent = "Rechercher mon entreprise";
+  }
+});
+
+function afficher(res) {
+  const s = res.siege || {};
+  const cp = s.code_postal || "";
+  const ville = s.libelle_commune || "";
+  let rue = (s.adresse || "").trim();
+  const fin = (cp + " " + ville).trim();
+  if (fin && rue.toUpperCase().endsWith(fin.toUpperCase())) rue = rue.slice(0, -fin.length).trim();
+  const nonDiffusible = !rue || !cp || /\[ND\]|NON[- ]DIFFUSIBLE/i.test(s.adresse || "") || /\[ND\]/.test(res.nom_complet || "");
+
+  entreprise = {
+    siren: res.siren,
+    raison_sociale: res.nom_raison_sociale || res.nom_complet || "",
+    adresse_societe: rue, code_postal: cp, ville: ville, manuel: nonDiffusible
+  };
+  $("c_nom").textContent = res.nom_complet || entreprise.raison_sociale;
+  $("c_siren").textContent = res.siren.replace(/(\d{3})(?=\d)/g, "$1 ");
+  $("c_adr").textContent = nonDiffusible ? "Adresse non publique" : `${rue}, ${cp} ${ville}`;
+  $("manual").classList.toggle("hidden", !nonDiffusible);
+  $("step1").classList.add("hidden");
+  $("step2").classList.remove("hidden");
+  clear($("m2"));
+}
+
+$("back").addEventListener("click", () => {
+  entreprise = null;
+  $("step2").classList.add("hidden");
+  $("step1").classList.remove("hidden");
+  $("siren").focus();
+});
+
+$("confirm").addEventListener("click", () => {
+  if (!entreprise || !formId) return;
+  const e = { ...entreprise };
+  if (e.manuel) {
+    e.adresse_societe = $("m_adr").value.trim();
+    e.code_postal = $("m_cp").value.trim();
+    e.ville = $("m_ville").value.trim();
+    if (!e.adresse_societe || !/^\d{5}$/.test(e.code_postal) || !e.ville)
+      return msg($("m2"), "err", "Merci de compléter l'adresse, le code postal (5 chiffres) et la ville.");
+  }
+  const p = new URLSearchParams({
+    siren: e.siren,
+    raison_sociale: e.raison_sociale,
+    adresse_societe: e.adresse_societe,
+    code_postal: e.code_postal,
+    ville: e.ville,
+    facturation: "Oui"
+  });
+  if (qs.get("profil")) p.set("profil", qs.get("profil"));
+  location.href = `https://tally.so/r/${formId}?${p.toString()}`;
+});
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Vérification de votre entreprise – Good Story</title>
+<style>
   :root{--bg:#f4f6fb;--card:#fff;--text:#10093c;--muted:#5f5e7a;--accent:#4487bd;--btn:#0a287d;--ok:#1f7a4d;--err:#b3261e;--line:#e3e6ef}
   *{box-sizing:border-box}
   body{margin:0;font-family:Roboto,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
