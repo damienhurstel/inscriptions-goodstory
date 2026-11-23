@@ -173,6 +173,13 @@ $("f").addEventListener("submit", async e => {
   }
 });
 
+// Numéro de TVA intracommunautaire français calculé depuis le SIREN (clé officielle)
+function tvaDepuisSiren(siren) {
+  if (!/^\d{9}$/.test(siren || "")) return "";
+  const cle = (12 + 3 * (Number(siren) % 97)) % 97;
+  return "FR" + String(cle).padStart(2, "0") + siren;
+}
+
 function afficher(res) {
   const s = res.siege || {};
   const cp = s.code_postal || "";
@@ -185,7 +192,8 @@ function afficher(res) {
   entreprise = {
     siren: res.siren,
     raison_sociale: res.nom_raison_sociale || res.nom_complet || "",
-    adresse_societe: rue, code_postal: cp, ville: ville, manuel: nonDiffusible
+    adresse_societe: rue, code_postal: cp, ville: ville, manuel: nonDiffusible,
+    tva: (Array.isArray(res.tva) && res.tva[0]) || tvaDepuisSiren(res.siren)
   };
   $("c_nom").textContent = res.nom_complet || entreprise.raison_sociale;
   $("c_siren").textContent = res.siren.replace(/(\d{3})(?=\d)/g, "$1 ");
@@ -219,6 +227,7 @@ $("confirm").addEventListener("click", () => {
     adresse_societe: e.adresse_societe,
     code_postal: e.code_postal,
     ville: e.ville,
+    tva: e.tva || "",
     facturation: "Oui"
   });
   if (qs.get("profil")) p.set("profil", qs.get("profil"));
