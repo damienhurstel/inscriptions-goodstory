@@ -31,7 +31,7 @@
   .company .line{margin:2px 0;color:var(--muted)}
   .badge{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 10px;border-radius:99px;background:#e6f4ec;color:var(--ok);margin-bottom:8px}
   .grid{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:10px}
-  .hidden{display:none}
+  .hidden{display:none!important}
   .foot{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
   .foot a{color:var(--muted)}
   .gs{display:block;width:190px;margin:0 auto 22px;color:var(--text)}
@@ -175,6 +175,7 @@ $("f").addEventListener("submit", async e => {
   const siren = $("siren").value.replace(/\D/g, "").slice(0, 9);
   if (siren.length !== 9) return msg($("m1"), "err", "Le SIREN doit comporter 9 chiffres.");
   if (!sirenValide(siren)) return msg($("m1"), "err", "Ce numéro SIREN n'est pas valide. Merci de vérifier la saisie.");
+  if (siren === conf.sirenDonneurOrdre) return msg($("m1"), "err", `Ce numéro est celui de ${conf.donneurOrdre || "l'organisateur"}. Si vous êtes salarié(e) ${conf.donneurOrdre || ""}, utilisez le lien d'inscription que vous avez reçu de votre direction, ou écrivez à pauline@goodstory.events.`.replace(/\s+,/g, ","));
 
   $("go").disabled = true; $("go").textContent = "Recherche en cours…";
   try {
@@ -246,10 +247,8 @@ $("confirm").addEventListener("click", () => {
     adresse_societe: e.adresse_societe,
     code_postal: e.code_postal,
     ville: e.ville,
-    tva: e.tva || "",
-    facturation: "Oui"
+    tva: e.tva || ""
   });
-  if (qs.get("profil")) p.set("profil", qs.get("profil"));
   location.href = `https://tally.so/r/${formId}?${p.toString()}`;
 });
 </script>
