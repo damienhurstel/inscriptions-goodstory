@@ -36,6 +36,10 @@
   .foot a{color:var(--muted)}
   .gs{display:block;width:190px;margin:0 auto 22px;color:var(--text)}
   .gs-small{display:inline-block;width:90px;vertical-align:middle;color:var(--muted)}
+  .steps{background:var(--bg);border-radius:10px;padding:12px 14px;margin:0 0 22px;font-size:.95rem}
+  .steps-t{font-weight:600;margin:0 0 4px}
+  .steps ol{margin:0;padding-left:20px}
+  .steps li{margin:2px 0}
 </style>
 </head>
 <body>
@@ -54,11 +58,12 @@
     <!-- Étape 1 : saisie -->
     <section id="step1">
       <h1 id="titre">Vérification de votre entreprise</h1>
-      <p class="sub">Avant de vous inscrire, merci d'indiquer le numéro SIREN de l'entreprise qui sera facturée.</p>
+      <p class="sub" id="soustitre">Avant de vous inscrire, merci d'indiquer le numéro SIREN de l'entreprise qui sera facturée.</p>
+      <div class="steps hidden" id="etapes"><p class="steps-t">Votre inscription en 3 étapes</p><ol id="etapes_l"></ol></div>
       <form id="f" novalidate>
-        <label for="siren">Numéro SIREN (9 chiffres)</label>
-        <input id="siren" inputmode="numeric" autocomplete="off" maxlength="11" placeholder="123 456 789">
-        <p class="hint">Il figure sur votre Kbis ou vos factures. Le SIRET (14 chiffres) fonctionne aussi : nous gardons les 9 premiers.</p>
+        <label for="siren">Numéro SIREN de votre entreprise</label>
+        <input id="siren" inputmode="numeric" autocomplete="off" maxlength="17" placeholder="123 456 789">
+        <p class="hint">9 chiffres, sur votre Kbis ou vos factures.</p>
         <button class="primary" id="go" type="submit">Rechercher mon entreprise</button>
       </form>
       <div id="m1" class="msg"></div>
@@ -67,7 +72,7 @@
     <!-- Étape 2 : confirmation -->
     <section id="step2" class="hidden">
       <h1>Est-ce bien votre entreprise ?</h1>
-      <p class="sub">Informations issues de l'Annuaire des entreprises (État).</p>
+      <p class="sub">Informations issues de l'annuaire officiel des entreprises.</p>
       <div class="company">
         <span class="badge">Entreprise active</span>
         <p class="name" id="c_nom"></p>
@@ -83,7 +88,7 @@
           <div><label for="m_ville">Ville</label><input id="m_ville" autocomplete="address-level2"></div>
         </div>
       </div>
-      <button class="primary" id="confirm">Oui, je confirme et je continue</button>
+      <button class="primary" id="confirm">Oui, je continue mon inscription</button>
       <button class="ghost" id="back">Non, modifier le numéro</button>
       <div id="m2" class="msg"></div>
     </section>
@@ -97,12 +102,20 @@
    Un seul lien pour tous les voyages :
      https://inscription.goodstory.events/?form=CODE_TALLY
    CODE_TALLY = la fin de l'adresse du formulaire (tally.so/r/CODE_TALLY).
-   Tout formulaire Tally fonctionne sans être déclaré ici (présentation Good Story).
-   Déclarer un voyage ci-dessous permet seulement d'afficher son titre, le logo
-   et les couleurs du client. */
+   Chaque voyage doit être déclaré ci-dessous (un bloc par voyage).
+   Obligatoire : sirenDonneurOrdre (SIREN du client qui invite ; ses salariés
+   ont leur propre formulaire et ne passent pas par cette page). */
 const VOYAGES = {
   "0V8goA": {
     titre: "Challenge Top 50 – Corse 2027",
+    accueil: "Un séminaire Rexel organisé par Good Story, au départ de Bordeaux.",
+    etapes: [
+      "Vérifiez votre entreprise, ci-dessous.",
+      "Complétez le formulaire (5 minutes, pièce d'identité à portée de main).",
+      "Signez vos CGV et réglez votre participation de 600 € TTC."
+    ],
+    donneurOrdre: "Rexel",
+    sirenDonneurOrdre: "309304616",
     logo: "https://storage.tally.so/a6f266a0-7046-4495-94d2-f5b9fcabe90c/REXEL_logo_RVB_coul_web.jpg",
     couleurs: { texte: "#10093c", bouton: "#0a287d", accent: "#4487bd", fond: "#f4f6fb" }
   }
@@ -111,13 +124,19 @@ const API = "https://recherche-entreprises.api.gouv.fr/search";
 
 const qs = new URLSearchParams(location.search);
 const formId = /^[A-Za-z0-9]{4,12}$/.test(qs.get("form") || "") ? qs.get("form") : null;
-const conf = (formId && VOYAGES[formId]) || {};
+const conf = (formId && VOYAGES[formId]) || null;
 const $ = id => document.getElementById(id);
-if (!formId) {
+if (!conf || !/^\d{9}$/.test(conf.sirenDonneurOrdre || "")) {
   $("step1").classList.add("hidden");
   $("step0").classList.remove("hidden");
+  throw new Error("voyage non déclaré ou SIREN du donneur d'ordre manquant");
 }
-if (conf.titre) { $("titre").textContent = conf.titre; document.title = conf.titre + " – Vérification entreprise"; }
+if (conf.titre) { $("titre").textContent = conf.titre; document.title = conf.titre + " – Inscription"; }
+if (conf.accueil) $("soustitre").textContent = conf.accueil;
+if (Array.isArray(conf.etapes) && conf.etapes.length) {
+  conf.etapes.forEach(t => { const li = document.createElement("li"); li.textContent = t; $("etapes_l").appendChild(li); });
+  $("etapes").classList.remove("hidden");
+}
 if (conf.logo) { $("logo").src = conf.logo; $("logo").alt = conf.titre || ""; $("logo").classList.remove("hidden"); $("gslogo").classList.add("hidden"); }
 if (conf.couleurs) {
   const c = conf.couleurs, r = document.documentElement.style;
