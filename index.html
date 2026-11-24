@@ -67,6 +67,7 @@
         <button class="primary" id="go" type="submit">Rechercher mon entreprise</button>
       </form>
       <div id="m1" class="msg"></div>
+      <p class="hint" id="note_salaries" style="margin-top:18px"></p>
     </section>
 
     <!-- Étape 2 : confirmation -->
@@ -133,6 +134,7 @@ if (!conf || !/^\d{9}$/.test(conf.sirenDonneurOrdre || "")) {
 }
 if (conf.titre) { $("titre").textContent = conf.titre; document.title = conf.titre + " – Inscription"; }
 if (conf.accueil) $("soustitre").textContent = conf.accueil;
+  if (conf.donneurOrdre) $("note_salaries").textContent = `Vous êtes salarié(e) ${conf.donneurOrdre} ? Votre inscription se fait sur un autre formulaire : utilisez le lien envoyé par votre direction.`;
 if (Array.isArray(conf.etapes) && conf.etapes.length) {
   conf.etapes.forEach(t => { const li = document.createElement("li"); li.textContent = t; $("etapes_l").appendChild(li); });
   $("etapes").classList.remove("hidden");
