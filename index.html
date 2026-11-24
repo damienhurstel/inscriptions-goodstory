@@ -12,7 +12,7 @@
   .wrap{max-width:560px;margin:0 auto;padding:32px 16px 48px}
   .logo{display:block;max-width:180px;max-height:70px;margin:0 auto 20px}
   .card{background:var(--card);border-radius:14px;padding:28px 24px;box-shadow:0 2px 12px rgba(16,9,60,.07)}
-  h1{font-size:1.35rem;margin:0 0 6px}
+  h1{font-size:1.2rem;line-height:1.3;margin:0 0 6px}
   .sub{color:var(--muted);margin:0 0 22px;font-size:.95rem}
   label{display:block;font-weight:600;margin:0 0 6px;font-size:.95rem}
   input{width:100%;font:inherit;font-size:1.1rem;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;color:var(--text);background:#fff}
@@ -72,7 +72,7 @@
 
     <!-- Étape 2 : confirmation -->
     <section id="step2" class="hidden">
-      <h1>Est-ce bien votre entreprise ?</h1>
+      <h1>Est-ce bien votre entreprise&nbsp;?</h1>
       <p class="sub">Informations issues de l'annuaire officiel des entreprises.</p>
       <div class="company">
         <span class="badge">Entreprise active</span>
@@ -81,7 +81,7 @@
         <p class="line" id="c_adr"></p>
       </div>
       <div id="manual" class="hidden">
-        <p class="hint" style="margin-top:14px">L'adresse de cette entreprise n'est pas publique. Merci d'indiquer l'adresse de facturation :</p>
+        <p class="hint" style="margin-top:14px">L'adresse de cette entreprise n'est pas publique. Merci d'indiquer l'adresse de facturation&nbsp;:</p>
         <label for="m_adr" style="margin-top:10px">Adresse</label>
         <input id="m_adr" autocomplete="street-address">
         <div class="grid">
@@ -134,7 +134,7 @@ if (!conf || !/^\d{9}$/.test(conf.sirenDonneurOrdre || "")) {
 }
 if (conf.titre) { $("titre").textContent = conf.titre; document.title = conf.titre + " – Inscription"; }
 if (conf.accueil) $("soustitre").textContent = conf.accueil;
-  if (conf.donneurOrdre) $("note_salaries").textContent = `Vous êtes salarié(e) ${conf.donneurOrdre} ? Votre inscription se fait sur un autre formulaire : utilisez le lien envoyé par votre direction.`;
+  if (conf.donneurOrdre) $("note_salaries").textContent = `Vous êtes salarié(e) ${conf.donneurOrdre}\u00A0? Votre inscription se fait sur un autre formulaire\u00A0: utilisez le lien envoyé par votre direction.`;
 if (Array.isArray(conf.etapes) && conf.etapes.length) {
   conf.etapes.forEach(t => { const li = document.createElement("li"); li.textContent = t; $("etapes_l").appendChild(li); });
   $("etapes").classList.remove("hidden");
